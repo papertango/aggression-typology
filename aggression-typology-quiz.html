@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aggression Typology — Which Character Are You?</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background: #1a1a1a;
+    color: #e8e8e8;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    line-height: 1.6;
+  }
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.02em;
+    color: #f4e4bc;
+  }
+  .subtitle {
+    color: #999;
+    font-style: italic;
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+  }
+  .intro {
+    background: #2a2a2a;
+    padding: 1.5rem;
+    border-left: 3px solid #c9a961;
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+  }
+  .question {
+    background: #242424;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+    border: 1px solid #333;
+  }
+  .question-text {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+  .question-number {
+    color: #c9a961;
+    font-weight: bold;
+    margin-right: 0.5rem;
+  }
+  .scale {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  .scale-label {
+    font-size: 0.75rem;
+    color: #888;
+    flex: 0 0 auto;
+    width: 80px;
+  }
+  .scale-label.right { text-align: right; }
+  .options {
+    display: flex;
+    gap: 0.5rem;
+    flex: 1;
+    justify-content: center;
+  }
+  .option {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #555;
+    background: transparent;
+    color: #ccc;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: all 0.15s ease;
+  }
+  .option:hover {
+    border-color: #c9a961;
+    color: #f4e4bc;
+  }
+  .option.selected {
+    background: #c9a961;
+    color: #1a1a1a;
+    border-color: #c9a961;
+    font-weight: bold;
+  }
+  button.submit {
+    display: block;
+    margin: 2rem auto;
+    padding: 0.9rem 2.5rem;
+    background: #c9a961;
+    color: #1a1a1a;
+    border: none;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 3px;
+    letter-spacing: 0.05em;
+    transition: background 0.15s ease;
+  }
+  button.submit:hover:not(:disabled) {
+    background: #f4e4bc;
+  }
+  button.submit:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* Results */
+  .results {
+    display: none;
+    animation: fadeIn 0.6s ease;
+  }
+  .results.visible { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .matrix-wrapper {
+    background: #242424;
+    padding: 2rem;
+    border-radius: 4px;
+    margin-bottom: 2rem;
+  }
+  svg.matrix {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .character-card {
+    background: linear-gradient(135deg, #2a2a2a 0%, #1f1f1f 100%);
+    border: 1px solid #c9a961;
+    padding: 2rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+  }
+  .character-name {
+    font-size: 1.6rem;
+    color: #f4e4bc;
+    margin-bottom: 0.25rem;
+  }
+  .character-film {
+    color: #999;
+    font-style: italic;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+  }
+  .quadrant-label {
+    display: inline-block;
+    background: #c9a961;
+    color: #1a1a1a;
+    padding: 0.2rem 0.6rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+  }
+  .character-desc {
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+  }
+  .scores {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #333;
+  }
+  .score {
+    text-align: center;
+  }
+  .score-label {
+    font-size: 0.75rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.3rem;
+  }
+  .score-value {
+    font-size: 1.4rem;
+    color: #f4e4bc;
+    font-weight: bold;
+  }
+  .restart {
+    display: block;
+    margin: 1rem auto;
+    padding: 0.6rem 1.5rem;
+    background: transparent;
+    color: #c9a961;
+    border: 1px solid #c9a961;
+    font-family: inherit;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 0.85rem;
+  }
+  .restart:hover { background: #c9a961; color: #1a1a1a; }
+
+  .disclaimer {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 2rem;
+    text-align: center;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div id="quiz-section">
+    <h1>The Aggression Typology</h1>
+    <p class="subtitle">A character placement experiment</p>
+
+    <div class="intro">
+      This instrument places you on a two-axis model of aggression style — <strong>impulsivity</strong> (how quickly threat or frustration translates into action) and <strong>influence</strong> (how much leverage you bring to a confrontation). A third dimension — <strong>activation</strong> — measures how readily you escalate from baseline toward action. Answer honestly; there are no good or bad quadrants, only different profiles. Each result maps to a film character who exemplifies that quadrant.
+    </div>
+
+    <div id="questions"></div>
+
+    <button class="submit" id="submitBtn" disabled>Reveal Result</button>
+  </div>
+
+  <div class="results" id="results">
+    <h1>Your Profile</h1>
+    <p class="subtitle">Where you land on the matrix</p>
+
+    <div class="matrix-wrapper">
+      <svg class="matrix" viewBox="0 0 500 420" id="matrix"></svg>
+    </div>
+
+    <div class="character-card" id="characterCard"></div>
+
+    <button class="restart" onclick="location.reload()">Take Again</button>
+    <p class="disclaimer">This is a conceptual instrument, not a clinical assessment. It measures self-perceived tendencies in a small number of dimensions and should not be interpreted as a diagnosis of anything.</p>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// QUESTIONS — mixed positive/negative scoring per axis
+// ============================================================
+// axis: 'I' = impulsivity, 'F' = influence, 'A' = activation (radial)
+// reverse: true means high score = low trait
+const questions = [
+  { text: "When someone insults me, I feel the urge to respond immediately, before thinking it through.", axis: "I", reverse: false },
+  { text: "I tend to weigh the long-term consequences of confrontation before engaging.", axis: "I", reverse: true },
+  { text: "In group settings, my opinion tends to shape what the group ends up doing.", axis: "F", reverse: false },
+  { text: "When I'm angry, I find it hard to delay acting on that feeling.", axis: "I", reverse: false },
+  { text: "When I want something done, I usually have the resources or relationships to make it happen.", axis: "F", reverse: false },
+  { text: "I rarely feel that I have meaningful control over conflicts I find myself in.", axis: "F", reverse: true },
+  { text: "I prefer to let a slight pass rather than confront the person.", axis: "I", reverse: true },
+  { text: "I have ways of getting what I want from people, even when they initially resist.", axis: "F", reverse: false },
+  { text: "Once I decide a confrontation is necessary, I escalate quickly to make my point land.", axis: "A", reverse: false },
+  { text: "I usually de-escalate situations rather than push them toward a head.", axis: "A", reverse: true }
+];
+
+// ============================================================
+// CHARACTERS — one per quadrant
+// ============================================================
+const characters = {
+  A1: {
+    name: "Travis Bickle",
+    film: "Taxi Driver (1976)",
+    quadrant: "A1 — REACTIVE, LOW INFLUENCE",
+    desc: "Threat-saturated, isolated, and primed to lash out. Travis exemplifies the high-impulsivity / low-influence profile: a man whose internal pressure has nowhere productive to go and whose reactions outpace his capacity to shape consequences. Aggression as eruption, not as strategy. People in this quadrant feel things intensely and respond fast, but lack the structural leverage to make their responses land cleanly — which often makes the responses more dramatic, not less."
+  },
+  A2: {
+    name: "Tony Montana",
+    film: "Scarface (1983)",
+    quadrant: "A2 — REACTIVE, HIGH INFLUENCE",
+    desc: "Volcanic temperament married to real power. Tony reacts at the speed of any high-impulsivity actor, but he commands an organization, resources, and a reputation that turn each reaction into a consequential event. This is reactive aggression amplified by leverage — the most volatile combination on the matrix, because the gap between trigger and irreversible outcome can be vanishingly small. Charisma and capability make the impulsivity feel like decisiveness, until it doesn't."
+  },
+  B1: {
+    name: "Tom Ripley",
+    film: "The Talented Mr. Ripley (1999)",
+    quadrant: "B1 — INSTRUMENTAL, LOW INFLUENCE",
+    desc: "Cold, patient, and calculating from a position of social precarity. Ripley plans because he has to — he lacks the structural power to simply impose his will, so he engineers situations, manages perceptions, and acts only when the angles favor him. This quadrant houses the strategist without an army: people who use observation, mimicry, and timing as substitutes for leverage. The aggression is real but quiet, often unrecognized as aggression until it has already succeeded."
+  },
+  B2: {
+    name: "Hans Landa",
+    film: "Inglourious Basterds (2009)",
+    quadrant: "B2 — INSTRUMENTAL, HIGH INFLUENCE",
+    desc: "The pure form of cold, calculated, institutionally-backed aggression. Landa is unhurried, pleasant, methodical — and devastating, because every move is planned and every resource is available. This quadrant produces the most structurally consequential aggression on the matrix. Nothing looks dysregulated; everything is in fact maximally controlled. The danger is precisely that B2 aggression doesn't read as aggression in the moment — it reads as competence, professionalism, or routine procedure, until the trap closes."
+  }
+};
+
+// ============================================================
+// QUIZ STATE & RENDERING
+// ============================================================
+const answers = new Array(questions.length).fill(null);
+
+function renderQuestions() {
+  const container = document.getElementById('questions');
+  questions.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'question';
+    div.innerHTML = `
+      <div class="question-text"><span class="question-number">${i+1}.</span>${q.text}</div>
+      <div class="scale">
+        <span class="scale-label">Strongly<br>disagree</span>
+        <div class="options">
+          ${[1,2,3,4,5].map(n => `<button class="option" data-q="${i}" data-v="${n}">${n}</button>`).join('')}
+        </div>
+        <span class="scale-label right">Strongly<br>agree</span>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+
+  document.querySelectorAll('.option').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const q = parseInt(e.target.dataset.q);
+      const v = parseInt(e.target.dataset.v);
+      answers[q] = v;
+      // Update UI
+      document.querySelectorAll(`.option[data-q="${q}"]`).forEach(b => b.classList.remove('selected'));
+      e.target.classList.add('selected');
+      // Enable submit if all answered
+      document.getElementById('submitBtn').disabled = answers.includes(null);
+    });
+  });
+}
+
+// ============================================================
+// SCORING
+// ============================================================
+function computeScores() {
+  let iSum = 0, iCount = 0;
+  let fSum = 0, fCount = 0;
+  let aSum = 0, aCount = 0;
+
+  questions.forEach((q, i) => {
+    const raw = q.reverse ? (6 - answers[i]) : answers[i];
+    if (q.axis === 'I') { iSum += raw; iCount++; }
+    if (q.axis === 'F') { fSum += raw; fCount++; }
+    if (q.axis === 'A') { aSum += raw; aCount++; }
+  });
+
+  // Normalize each to 0-1
+  const impulsivity = (iSum / iCount - 1) / 4;
+  const influence  = (fSum / fCount - 1) / 4;
+  const activation = (aSum / aCount - 1) / 4;
+
+  // Determine quadrant
+  // Top row (A) = high impulsivity; Bottom row (B) = low
+  // Right col (2) = high influence; Left col (1) = low
+  let quadrant;
+  if (impulsivity >= 0.5 && influence < 0.5) quadrant = 'A1';
+  else if (impulsivity >= 0.5 && influence >= 0.5) quadrant = 'A2';
+  else if (impulsivity < 0.5 && influence < 0.5) quadrant = 'B1';
+  else quadrant = 'B2';
+
+  return { impulsivity, influence, activation, quadrant };
+}
+
+// ============================================================
+// MATRIX SVG RENDERING
+// ============================================================
+function renderMatrix(scores) {
+  const svg = document.getElementById('matrix');
+  // Coordinate system: 80,40 to 420,380 is the box
+  const x0 = 80, y0 = 40, x1 = 420, y1 = 380;
+  const w = x1 - x0, h = y1 - y0;
+  const cx = (x0 + x1) / 2;
+  const cy = (y0 + y1) / 2;
+
+  // User position: influence on x (0 left, 1 right); impulsivity on y (1 top, 0 bottom)
+  const userX = x0 + scores.influence * w;
+  const userY = y1 - scores.impulsivity * h;
+
+  // Activation determines proximity to center: high activation = closer to center
+  // We blend the user's quadrant position toward the center based on activation
+  const blendedX = userX + (cx - userX) * scores.activation * 0.4;
+  const blendedY = userY + (cy - userY) * scores.activation * 0.4;
+
+  svg.innerHTML = `
+    <!-- Outer box -->
+    <rect x="${x0}" y="${y0}" width="${w}" height="${h}" fill="none" stroke="#666" stroke-width="1.5"/>
+
+    <!-- Diagonals -->
+    <line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y1}" stroke="#333" stroke-width="1"/>
+    <line x1="${x1}" y1="${y0}" x2="${x0}" y2="${y1}" stroke="#333" stroke-width="1"/>
+
+    <!-- Crosshairs -->
+    <line x1="${cx}" y1="${y0}" x2="${cx}" y2="${y1}" stroke="#444" stroke-width="1" stroke-dasharray="3,3"/>
+    <line x1="${x0}" y1="${cy}" x2="${x1}" y2="${cy}" stroke="#444" stroke-width="1" stroke-dasharray="3,3"/>
+
+    <!-- Concentric circles (activation rings) -->
+    <circle cx="${cx}" cy="${cy}" r="${w*0.32}" fill="none" stroke="#3a3a3a" stroke-width="1"/>
+    <circle cx="${cx}" cy="${cy}" r="${w*0.20}" fill="none" stroke="#4a4a4a" stroke-width="1"/>
+    <circle cx="${cx}" cy="${cy}" r="${w*0.08}" fill="#1a1a1a" stroke="#c9a961" stroke-width="1.5"/>
+
+    <!-- Quadrant labels -->
+    <text x="${x0 + w*0.25}" y="${y0 + 22}" fill="#888" font-family="Georgia" font-size="14" font-weight="bold" text-anchor="middle">A1</text>
+    <text x="${x0 + w*0.75}" y="${y0 + 22}" fill="#888" font-family="Georgia" font-size="14" font-weight="bold" text-anchor="middle">A2</text>
+    <text x="${x0 + w*0.25}" y="${y1 - 10}" fill="#888" font-family="Georgia" font-size="14" font-weight="bold" text-anchor="middle">B1</text>
+    <text x="${x0 + w*0.75}" y="${y1 - 10}" fill="#888" font-family="Georgia" font-size="14" font-weight="bold" text-anchor="middle">B2</text>
+
+    <!-- Axis labels -->
+    <text x="${x0 - 10}" y="${cy + 4}" fill="#c9a961" font-family="Georgia" font-size="13" font-style="italic" text-anchor="end">Impulsivity</text>
+    <text x="${cx}" y="${y1 + 30}" fill="#c9a961" font-family="Georgia" font-size="13" font-style="italic" text-anchor="middle">Influence</text>
+
+    <!-- Reactive / instrumental labels -->
+    <text x="${x1 + 8}" y="${y0 + h*0.25}" fill="#777" font-family="Georgia" font-size="10" font-style="italic">reactive</text>
+    <text x="${x1 + 8}" y="${y0 + h*0.75}" fill="#777" font-family="Georgia" font-size="10" font-style="italic">instrumental</text>
+
+    <!-- Trajectory line from baseline to user position -->
+    <line x1="${userX}" y1="${userY}" x2="${blendedX}" y2="${blendedY}"
+          stroke="#c9a961" stroke-width="1" stroke-dasharray="2,2" opacity="0.5"/>
+
+    <!-- Baseline marker (faint) -->
+    <circle cx="${userX}" cy="${userY}" r="4" fill="none" stroke="#c9a961" stroke-width="1" opacity="0.4"/>
+
+    <!-- User position (activation-adjusted) -->
+    <circle cx="${blendedX}" cy="${blendedY}" r="8" fill="#c9a961" stroke="#f4e4bc" stroke-width="2">
+      <animate attributeName="r" values="8;11;8" dur="2s" repeatCount="indefinite"/>
+    </circle>
+  `;
+}
+
+// ============================================================
+// RESULT DISPLAY
+// ============================================================
+function showResults() {
+  const scores = computeScores();
+  const char = characters[scores.quadrant];
+
+  document.getElementById('quiz-section').style.display = 'none';
+  document.getElementById('results').classList.add('visible');
+
+  renderMatrix(scores);
+
+  document.getElementById('characterCard').innerHTML = `
+    <div class="quadrant-label">${char.quadrant}</div>
+    <div class="character-name">${char.name}</div>
+    <div class="character-film">${char.film}</div>
+    <div class="character-desc">${char.desc}</div>
+    <div class="scores">
+      <div class="score">
+        <div class="score-label">Impulsivity</div>
+        <div class="score-value">${Math.round(scores.impulsivity * 100)}%</div>
+      </div>
+      <div class="score">
+        <div class="score-label">Influence</div>
+        <div class="score-value">${Math.round(scores.influence * 100)}%</div>
+      </div>
+      <div class="score">
+        <div class="score-label">Activation</div>
+        <div class="score-value">${Math.round(scores.activation * 100)}%</div>
+      </div>
+    </div>
+  `;
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ============================================================
+// INIT
+// ============================================================
+renderQuestions();
+document.getElementById('submitBtn').addEventListener('click', showResults);
+</script>
+</body>
+</html>
